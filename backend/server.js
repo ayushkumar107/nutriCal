@@ -11,11 +11,12 @@ connectDB();
 
 const app = express();
 
-const path = require('path');
-
 // Middleware
 app.use(express.json({ limit: '10mb' }));
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://your-frontend.vercel.app'],
+  credentials: true
+}));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -24,23 +25,10 @@ app.use('/api/meals', require('./routes/mealRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
-// Serve Frontend in Production
-if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  const frontendPath = path.join(__dirname, '../frontend/dist');
-  app.use(express.static(frontendPath));
-
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.resolve(frontendPath, 'index.html'));
-    }
-  });
-} else {
-  // Basic route for development
-  app.get('/', (req, res) => {
-    res.send('API is running in development mode...');
-  });
-}
+// Root health check route
+app.get('/', (req, res) => {
+  res.send('Backend is running 🚀');
+});
 
 const PORT = process.env.PORT || 5000;
 
