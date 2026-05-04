@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 import NotificationBell from './components/NotificationBell';
+import { Camera, ScanBarcode, Brain, Scan, BarChart3, BrainCircuit } from 'lucide-react';
 
 // Pages
 import Login from './pages/Login';
@@ -28,17 +29,17 @@ const Home = () => (
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
         <div className="glass" style={{ padding: '1.5rem', flex: '1 1 250px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📷</div>
+          <div style={{ marginBottom: '1rem' }}><Camera size={32} color="var(--neon-cyan)" /></div>
           <h3>Food Recognition</h3>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Identify meals and portion sizes using AI.</p>
         </div>
         <div className="glass" style={{ padding: '1.5rem', flex: '1 1 250px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔍</div>
+          <div style={{ marginBottom: '1rem' }}><ScanBarcode size={32} color="var(--accent-warning)" /></div>
           <h3>Barcode Scanner</h3>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Instantly lookup packaged foods via barcode.</p>
         </div>
         <div className="glass" style={{ padding: '1.5rem', flex: '1 1 250px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🧮</div>
+          <div style={{ marginBottom: '1rem' }}><Brain size={32} color="var(--neon-purple)" /></div>
           <h3>Smart Recommendations</h3>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Get feedback based on your fitness goals.</p>
         </div>
@@ -54,14 +55,14 @@ function App() {
     <div className="app-container">
       <header className="header">
         <Link to="/" className="logo">
-          nutri<span>Scan</span> 📸
+          nutri<span>Scan</span> <Scan size={24} style={{ marginLeft: '4px' }} />
         </Link>
         <nav className="nav-links" style={{ alignItems: 'center' }}>
           {user ? (
             <>
               <Link to="/dashboard">Dashboard</Link>
-              <Link to="/analytics">📊 Analytics</Link>
-              <Link to="/coach" style={{ color: '#a855f7', fontWeight: 600 }}>🧠 Coach</Link>
+              <Link to="/analytics" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><BarChart3 size={16} /> Analytics</Link>
+              <Link to="/coach" style={{ color: '#a855f7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><BrainCircuit size={16} /> Coach</Link>
               <NotificationBell user={user} />
               <Link to="/profile">Profile</Link>
               <a href="#" onClick={logout} style={{ color: 'var(--accent-danger)' }}>Logout</a>

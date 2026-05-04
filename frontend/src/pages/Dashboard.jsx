@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { scoreFood } from '../utils/foodScore';
+import { Flame, Beef, Wheat, Droplet, Camera, Target, Utensils, Bot, Package, XCircle, CheckCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, loading } = useContext(AuthContext);
@@ -53,17 +54,17 @@ const Dashboard = () => {
   const getDailyVerdict = () => {
     const calPercent = getProgress(totals.calories, targets.calorieTarget);
     if (user.goal === 'Cutting') {
-      if (calPercent > 100) return { icon: '🚫', text: 'Over your calorie limit! Consider lighter meals for the rest of the day.', color: 'var(--accent-danger)' };
-      if (calPercent > 80) return { icon: '⚠️', text: 'Approaching your daily limit. Be mindful with remaining meals.', color: 'var(--accent-warning)' };
-      return { icon: '✅', text: 'Great progress! You\'re well within your calorie budget today.', color: 'var(--accent-success)' };
+      if (calPercent > 100) return { icon: <XCircle size={32} />, text: 'Over your calorie limit! Consider lighter meals for the rest of the day.', color: 'var(--accent-danger)' };
+      if (calPercent > 80) return { icon: <AlertTriangle size={32} />, text: 'Approaching your daily limit. Be mindful with remaining meals.', color: 'var(--accent-warning)' };
+      return { icon: <CheckCircle size={32} />, text: 'Great progress! You\'re well within your calorie budget today.', color: 'var(--accent-success)' };
     }
     if (user.goal === 'Bulking') {
-      if (calPercent < 40) return { icon: '📢', text: 'You need more fuel! Add a high-calorie meal to hit your surplus.', color: 'var(--accent-warning)' };
-      if (calPercent >= 90) return { icon: '💪', text: 'Excellent! You\'re smashing your bulking target today.', color: 'var(--accent-success)' };
-      return { icon: '🔄', text: 'On track! Keep eating to meet your caloric surplus goal.', color: 'var(--text-accent)' };
+      if (calPercent < 40) return { icon: <Info size={32} />, text: 'You need more fuel! Add a high-calorie meal to hit your surplus.', color: 'var(--accent-warning)' };
+      if (calPercent >= 90) return { icon: <Beef size={32} />, text: 'Excellent! You\'re smashing your bulking target today.', color: 'var(--accent-success)' };
+      return { icon: <Target size={32} />, text: 'On track! Keep eating to meet your caloric surplus goal.', color: 'var(--text-accent)' };
     }
-    if (calPercent > 100) return { icon: '⚠️', text: 'Slightly over your maintenance calories. No worries—balance it tomorrow!', color: 'var(--accent-warning)' };
-    return { icon: '⚖️', text: 'You\'re maintaining well. Stay consistent!', color: 'var(--accent-success)' };
+    if (calPercent > 100) return { icon: <AlertTriangle size={32} />, text: 'Slightly over your maintenance calories. No worries—balance it tomorrow!', color: 'var(--accent-warning)' };
+    return { icon: <Target size={32} />, text: 'You\'re maintaining well. Stay consistent!', color: 'var(--accent-success)' };
   };
 
   const verdict = getDailyVerdict();
@@ -71,20 +72,40 @@ const Dashboard = () => {
   const dateString = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   const macros = [
-    { label: 'Calories', current: Math.round(totals.calories), target: targets.calorieTarget, unit: 'kcal', icon: '🔥' },
-    { label: 'Protein', current: Math.round(totals.protein), target: targets.proteinTarget, unit: 'g', icon: '🥩' },
-    { label: 'Carbs', current: Math.round(totals.carbs), target: targets.carbsTarget, unit: 'g', icon: '🍞' },
-    { label: 'Fats', current: Math.round(totals.fats), target: targets.fatsTarget, unit: 'g', icon: '🥑' },
+    { label: 'Calories', current: Math.round(totals.calories), target: targets.calorieTarget, unit: 'kcal', icon: <Flame size={16} /> },
+    { label: 'Protein', current: Math.round(totals.protein), target: targets.proteinTarget, unit: 'g', icon: <Beef size={16} /> },
+    { label: 'Carbs', current: Math.round(totals.carbs), target: targets.carbsTarget, unit: 'g', icon: <Wheat size={16} /> },
+    { label: 'Fats', current: Math.round(totals.fats), target: targets.fatsTarget, unit: 'g', icon: <Droplet size={16} /> },
   ];
 
   return (
     <div className="main-content">
       {/* Header Section */}
-      <div className="animate-fade-in" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ marginBottom: '0.25rem' }}>
-          Welcome back, <span style={{ color: 'var(--text-accent)' }}>{user.name}</span> 👋
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{dateString}</p>
+      <div className="animate-fade-in" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h2 style={{ marginBottom: '0.25rem' }}>
+            Welcome back, <span style={{ color: 'var(--text-accent)' }}>{user.name}</span> 👋
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>{dateString}</p>
+        </div>
+
+        {dailyData?.streak > 0 && (
+          <div className="glass" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.5rem 1rem',
+            color: '#f59e0b',
+            fontWeight: 800,
+            fontSize: '1rem',
+            border: '2px solid #f59e0b',
+            background: 'rgba(245, 158, 11, 0.15)',
+            boxShadow: '4px 4px 0px rgba(245, 158, 11, 0.3)',
+          }}>
+            <Flame size={20} color="#f59e0b" style={{ animation: 'pulse-glow 2s infinite' }} />
+            {dailyData.streak} Day Streak!
+          </div>
+        )}
       </div>
 
       {dataLoading ? (
@@ -96,7 +117,7 @@ const Dashboard = () => {
         <>
           {/* Daily Goal Banner */}
           <div className="glass animate-fade-in daily-goal-banner" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ fontSize: '2rem' }}>{verdict.icon}</span>
+            <span style={{ display: 'flex', color: verdict.color }}>{verdict.icon}</span>
             <div style={{ flex: 1 }}>
               <strong style={{ color: verdict.color }}>{user.goal} Mode</strong>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0 }}>{verdict.text}</p>
@@ -114,7 +135,7 @@ const Dashboard = () => {
                   style={{ padding: '1.25rem', animationDelay: `${i * 0.08}s` }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       {macro.icon} {macro.label}
                     </span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
@@ -165,7 +186,7 @@ const Dashboard = () => {
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease',
               }}
             >
-              <span style={{ fontSize: '2.5rem' }}>📸</span>
+              <Camera size={40} style={{ marginBottom: '0.5rem', color: 'var(--text-primary)' }} />
               <h3 style={{ margin: 0, fontSize: '1rem' }}>Scan Food</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
                 Upload an image or scan a barcode
@@ -184,7 +205,7 @@ const Dashboard = () => {
                 gap: '0.5rem',
               }}
             >
-              <span style={{ fontSize: '2.5rem' }}>🎯</span>
+              <Target size={40} style={{ marginBottom: '0.5rem', color: 'var(--text-primary)' }} />
               <h3 style={{ margin: 0, fontSize: '1rem' }}>Daily Target</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
                 {targets.calorieTarget} kcal • {targets.proteinTarget}g P • {targets.carbsTarget}g C • {targets.fatsTarget}g F
@@ -195,7 +216,7 @@ const Dashboard = () => {
           {/* Meal History */}
           <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🍽️ Today's Meals
+              <Utensils size={20} /> Today's Meals
               <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-secondary)' }}>
                 ({meals.length} logged)
               </span>
@@ -203,7 +224,7 @@ const Dashboard = () => {
 
             {meals.length === 0 ? (
               <div className="glass" style={{ padding: '2.5rem', textAlign: 'center' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem', opacity: 0.5 }}>🍽️</span>
+                <span style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', opacity: 0.5 }}><Utensils size={48} /></span>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>No meals logged yet today</p>
                 <Link to="/scanner" className="btn" style={{ display: 'inline-block' }}>
                   Log Your First Meal
@@ -223,19 +244,28 @@ const Dashboard = () => {
                       animationDelay: `${0.4 + index * 0.05}s`,
                     }}
                   >
-                    <div style={{ fontSize: '1.5rem', position: 'relative' }}>
+                    <div style={{ fontSize: '1.5rem', position: 'relative', display: 'flex' }}>
                       {(() => {
                         const s = scoreFood(meal.calories, meal.protein, user.goal);
                         return (
                           <>
-                            <span>{meal.aiEstimate ? '🤖' : '📦'}</span>
+                            <span style={{ display: 'flex' }}>{meal.aiEstimate ? <Bot size={24} color="var(--text-primary)" /> : <Package size={24} color="var(--text-primary)" />}</span>
                             <span style={{
                               position: 'absolute',
                               bottom: '-2px',
                               right: '-4px',
-                              fontSize: '0.75rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: 'var(--bg-card)',
+                              borderRadius: '50%',
+                              padding: '2px',
                               filter: `drop-shadow(0 0 4px ${s.color})`,
-                            }}>{s.emoji}</span>
+                            }}>
+                              {s.grade === 'GOOD' ? <CheckCircle size={14} color={s.color} /> : 
+                               s.grade === 'MODERATE' ? <AlertTriangle size={14} color={s.color} /> : 
+                               <XCircle size={14} color={s.color} />}
+                            </span>
                           </>
                         );
                       })()}
@@ -243,10 +273,10 @@ const Dashboard = () => {
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{meal.productName}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                        <span>🔥 {meal.calories} kcal</span>
-                        <span>🥩 {meal.protein}g</span>
-                        <span>🍞 {meal.carbs}g</span>
-                        <span>🥑 {meal.fats}g</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Flame size={12} /> {meal.calories} kcal</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Beef size={12} /> {meal.protein}g</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Wheat size={12} /> {meal.carbs}g</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Droplet size={12} /> {meal.fats}g</span>
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -270,7 +300,7 @@ const Dashboard = () => {
                         onMouseLeave={(e) => e.target.style.opacity = 0.6}
                         title="Remove meal"
                       >
-                        ✕
+                        <X size={16} />
                       </button>
                     </div>
                   </div>

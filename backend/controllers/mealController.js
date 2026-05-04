@@ -39,6 +39,57 @@ const calculateDailyTarget = (user) => {
   return { calorieTarget, proteinTarget, carbsTarget, fatsTarget };
 };
 
+// Helper: calculate login streak
+const calculateStreak = async (userId) => {
+  const logs = await MealLog.find({ user: userId }).sort({ date: -1 });
+  if (!logs || logs.length === 0) return 0;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let streak = 0;
+  const logDates = new Set();
+  
+  // Only keep days that have at least one meal
+  for (const log of logs) {
+    if (log.meals && log.meals.length > 0) {
+      logDates.add(log.date);
+    }
+  }
+
+  if (logDates.size === 0) return 0;
+
+  let checkDate = new Date(today);
+  const todayStr = checkDate.toISOString().split('T')[0];
+  
+  checkDate.setDate(checkDate.getDate() - 1);
+  const yesterdayStr = checkDate.toISOString().split('T')[0];
+
+  // If user hasn't logged today or yesterday, streak is 0
+  if (!logDates.has(todayStr) && !logDates.has(yesterdayStr)) {
+    return 0;
+  }
+
+  // Start counting backward from today
+  checkDate = new Date(today);
+  while (true) {
+    const dateStr = checkDate.toISOString().split('T')[0];
+    if (logDates.has(dateStr)) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      // If we miss today but we had yesterday, it's fine to continue counting from yesterday
+      if (dateStr === todayStr && logDates.has(yesterdayStr)) {
+        checkDate.setDate(checkDate.getDate() - 1);
+        continue;
+      }
+      break;
+    }
+  }
+
+  return streak;
+};
+
 // @desc    Log a meal to today's log
 // @route   POST /api/meals/log
 // @access  Private
@@ -104,11 +155,14 @@ const getTodayLog = async (req, res) => {
       { calories: 0, protein: 0, carbs: 0, fats: 0 }
     );
 
+    const streak = await calculateStreak(req.user._id);
+
     res.json({
       date: today,
       meals,
       totals,
       targets,
+      streak,
     });
   } catch (error) {
     console.error('Error getting today log:', error);

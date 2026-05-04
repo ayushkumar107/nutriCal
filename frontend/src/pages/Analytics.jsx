@@ -7,15 +7,17 @@ const Analytics = () => {
   const { user, loading } = useContext(AuthContext);
   const [data, setData] = useState(null);
   const [fetching, setFetching] = useState(true);
+  const [period, setPeriod] = useState('week'); // 'day', 'week', 'month'
 
   useEffect(() => {
     if (user) {
-      axios.get('/analytics/analytics')
+      setFetching(true);
+      axios.get(`/analytics/analytics?period=${period}`)
         .then((res) => setData(res.data))
         .catch(console.error)
         .finally(() => setFetching(false));
     }
-  }, [user]);
+  }, [user, period]);
 
   if (loading) return <div className="main-content" style={{ textAlign: 'center' }}>Loading...</div>;
   if (!user) return <Navigate to="/login" />;
@@ -46,13 +48,41 @@ const Analytics = () => {
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (performanceScore / 100) * circumference;
 
+  const timeRangeLabel = period === 'day' ? 'Today' : period === 'month' ? 'Last 30 days' : 'Last 7 days';
+  const headerTitle = period === 'day' ? 'Daily Analytics' : period === 'month' ? 'Monthly Analytics' : 'Weekly Analytics';
+
   return (
     <div className="main-content">
-      <div className="animate-fade-in" style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ marginBottom: '0.25rem' }}>📊 Weekly Analytics</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-          Last 7 days • {daysWithData} day{daysWithData !== 1 ? 's' : ''} logged • {goal} mode
-        </p>
+      <div className="animate-fade-in" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h2 style={{ marginBottom: '0.25rem' }}>📊 {headerTitle}</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
+            {timeRangeLabel} • {daysWithData} day{daysWithData !== 1 ? 's' : ''} logged • {goal} mode
+          </p>
+        </div>
+        
+        {/* Period Toggle */}
+        <div style={{ display: 'flex', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '8px' }}>
+          {['day', 'week', 'month'].map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              style={{
+                background: period === p ? 'var(--accent-primary)' : 'transparent',
+                color: period === p ? 'white' : 'var(--text-secondary)',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                textTransform: 'capitalize',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Top Row: Score + Insights */}
@@ -83,7 +113,7 @@ const Analytics = () => {
               }}
             />
             <text x="60" y="52" textAnchor="middle" fill={scoreColor} fontSize="28" fontWeight="800">{performanceScore}</text>
-            <text x="60" y="72" textAnchor="middle" fill="var(--text-secondary)" fontSize="10" fontWeight="500">WEEKLY SCORE</text>
+            <text x="60" y="72" textAnchor="middle" fill="var(--text-secondary)" fontSize="10" fontWeight="500">{period.toUpperCase()} SCORE</text>
           </svg>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
             <span>🔥 Cal: {calScore}%</span>
@@ -164,13 +194,13 @@ const Analytics = () => {
                     className="chart-bar"
                     style={{
                       width: '100%',
-                      maxWidth: '50px',
+                      maxWidth: period === 'month' ? '12px' : '50px',
                       height: `${Math.max(height, 2)}%`,
                       background: barColor,
                       borderRadius: '6px 6px 2px 2px',
                       transition: 'height 1s cubic-bezier(0.4, 0, 0.2, 1)',
                       position: 'relative',
-                      border: isToday ? '1px solid rgba(56,189,248,0.5)' : 'none',
+                      border: isToday && period !== 'month' ? '1px solid rgba(56,189,248,0.5)' : 'none',
                     }}
                   />
                   <span style={{
@@ -226,7 +256,7 @@ const Analytics = () => {
                   )}
                   <div style={{
                     width: '100%',
-                    maxWidth: '50px',
+                    maxWidth: period === 'month' ? '12px' : '50px',
                     height: `${Math.max(height, 2)}%`,
                     background: day.protein === 0
                       ? 'rgba(255,255,255,0.05)'
@@ -237,7 +267,7 @@ const Analytics = () => {
                           : 'linear-gradient(to top, rgba(245,158,11,0.5), rgba(251,191,36,0.5))',
                     borderRadius: '6px 6px 2px 2px',
                     transition: 'height 1s cubic-bezier(0.4, 0, 0.2, 1)',
-                    border: isToday ? '1px solid rgba(251,191,36,0.4)' : 'none',
+                    border: isToday && period !== 'month' ? '1px solid rgba(251,191,36,0.4)' : 'none',
                   }} />
                   <span style={{
                     fontSize: '0.7rem',
@@ -252,13 +282,13 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* Weekly Summary Cards */}
+      {/* Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', animationDelay: '0.4s' }}>
         {[
-          { label: 'Avg Calories', value: weekAvg.calories, target: targets.calorieTarget, unit: 'kcal', icon: '🔥', color: 'var(--text-accent)' },
-          { label: 'Avg Protein', value: weekAvg.protein, target: targets.proteinTarget, unit: 'g', icon: '🥩', color: '#22c55e' },
-          { label: 'Avg Carbs', value: weekAvg.carbs, target: targets.carbsTarget, unit: 'g', icon: '🍞', color: '#f59e0b' },
-          { label: 'Avg Fats', value: weekAvg.fats, target: targets.fatsTarget, unit: 'g', icon: '🥑', color: '#a78bfa' },
+          { label: period === 'day' ? 'Total Calories' : 'Avg Calories', value: weekAvg.calories, target: targets.calorieTarget, unit: 'kcal', icon: '🔥', color: 'var(--text-accent)' },
+          { label: period === 'day' ? 'Total Protein' : 'Avg Protein', value: weekAvg.protein, target: targets.proteinTarget, unit: 'g', icon: '🥩', color: '#22c55e' },
+          { label: period === 'day' ? 'Total Carbs' : 'Avg Carbs', value: weekAvg.carbs, target: targets.carbsTarget, unit: 'g', icon: '🍞', color: '#f59e0b' },
+          { label: period === 'day' ? 'Total Fats' : 'Avg Fats', value: weekAvg.fats, target: targets.fatsTarget, unit: 'g', icon: '🥑', color: '#a78bfa' },
         ].map((card, i) => {
           const pct = Math.round((card.value / card.target) * 100);
           return (

@@ -2,14 +2,15 @@ import { useState, useContext, useRef, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+import { Utensils, BarChart3, Egg, Beef, Target, ClipboardList, BrainCircuit, Send } from 'lucide-react';
 
 const quickPrompts = [
-  { text: 'What should I eat right now?', icon: '🍽️' },
-  { text: 'How am I doing today?', icon: '📊' },
-  { text: 'I ate 3 eggs and bread, is it good?', icon: '🥚' },
-  { text: 'Suggest a high-protein snack', icon: '💪' },
-  { text: 'Am I on track for my goal?', icon: '🎯' },
-  { text: 'Give me a meal plan for today', icon: '📋' },
+  { text: 'What should I eat right now?', icon: <Utensils size={14} /> },
+  { text: 'How am I doing today?', icon: <BarChart3 size={14} /> },
+  { text: 'I ate 3 eggs and bread, is it good?', icon: <Egg size={14} /> },
+  { text: 'Suggest a high-protein snack', icon: <Beef size={14} /> },
+  { text: 'Am I on track for my goal?', icon: <Target size={14} /> },
+  { text: 'Give me a meal plan for today', icon: <ClipboardList size={14} /> },
 ];
 
 const Coach = () => {
@@ -134,9 +135,8 @@ const Coach = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1.25rem',
           flexShrink: 0,
-        }}>🧠</div>
+        }}><BrainCircuit size={24} color="#fff" /></div>
         <div>
           <div style={{ fontWeight: 700, fontSize: '1rem' }}>NutriCoach AI</div>
           <div style={{ fontSize: '0.75rem', color: 'var(--accent-success)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -187,6 +187,9 @@ const Coach = () => {
                   fontWeight: 500,
                   transition: 'all 0.2s ease',
                   whiteSpace: 'nowrap',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
                 }}
               >
                 {prompt.icon} {prompt.text}
@@ -216,10 +219,9 @@ const Coach = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.85rem',
                 flexShrink: 0,
                 marginTop: '0.25rem',
-              }}>🧠</div>
+              }}><BrainCircuit size={16} color="#fff" /></div>
             )}
             <div style={{
               maxWidth: '75%',
@@ -252,9 +254,8 @@ const Coach = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '0.85rem',
               flexShrink: 0,
-            }}>🧠</div>
+            }}><BrainCircuit size={16} color="#fff" /></div>
             <div style={{
               padding: '0.85rem 1.1rem',
               borderRadius: '1.25rem 1.25rem 1.25rem 0.25rem',
@@ -326,7 +327,7 @@ const Coach = () => {
             flexShrink: 0,
           }}
         >
-          ➤
+          <Send size={18} />
         </button>
       </form>
     </div>

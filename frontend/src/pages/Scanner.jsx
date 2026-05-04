@@ -5,6 +5,7 @@ import axios from 'axios';
 import { scoreFood } from '../utils/foodScore';
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import Webcam from 'react-webcam';
+import { Camera, ScanBarcode, Image as ImageIcon, Loader2, CheckCircle, RefreshCcw, BarChart3, Flame, Beef, Wheat, Droplet, AlertTriangle, XCircle } from 'lucide-react';
 
 const Scanner = () => {
   const { user, loading } = useContext(AuthContext);
@@ -170,9 +171,9 @@ const Scanner = () => {
             setImageCameraActive(false);
             stopCameraScanner();
           }} 
-          style={{ background: activeTab === 'barcode' ? 'var(--accent-primary)' : 'var(--bg-card)', color: activeTab === 'barcode' ? 'white' : 'var(--text-secondary)' }}
+          style={{ background: activeTab === 'barcode' ? 'var(--accent-primary)' : 'var(--bg-card)', color: activeTab === 'barcode' ? 'white' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          🔍 Barcode Scanner
+          <ScanBarcode size={16} /> Barcode Scanner
         </button>
         <button 
           className="btn" 
@@ -180,9 +181,9 @@ const Scanner = () => {
             setActiveTab('image');
             stopCameraScanner();
           }}
-          style={{ background: activeTab === 'image' ? 'var(--accent-primary)' : 'var(--bg-card)', color: activeTab === 'image' ? 'white' : 'var(--text-secondary)' }}
+          style={{ background: activeTab === 'image' ? 'var(--accent-primary)' : 'var(--bg-card)', color: activeTab === 'image' ? 'white' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          📷 Image AI
+          <ImageIcon size={16} /> Image AI
         </button>
       </div>
 
@@ -192,8 +193,8 @@ const Scanner = () => {
           <div>
             {!cameraActive ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <button onClick={startCameraScanner} className="btn" style={{ background: 'var(--accent-secondary)' }}>
-                  📷 Scan Barcode via Camera
+                <button onClick={startCameraScanner} className="btn" style={{ background: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <Camera size={16} /> Scan Barcode via Camera
                 </button>
                 
                 <div style={{ textAlign: 'center', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-color)', lineHeight: '0.1em', margin: '10px 0 20px' }}>
@@ -232,12 +233,12 @@ const Scanner = () => {
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <div 
                     onClick={() => { setImageCameraActive(true); setImageFile(null); setError(''); }}
-                    style={{ position: 'relative', flex: 1, border: '2px dashed var(--border-color)', padding: '1rem', textAlign: 'center', borderRadius: '1rem', cursor: 'pointer', overflow: 'hidden' }}
+                    style={{ position: 'relative', flex: 1, border: '2px dashed var(--border-color)', padding: '1rem', textAlign: 'center', borderRadius: '1rem', cursor: 'pointer', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                   >
-                    <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>📷</span>
+                    <span style={{ marginBottom: '0.5rem' }}><Camera size={32} color="var(--text-secondary)" /></span>
                     <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Live Camera</span>
                   </div>
-                  <div style={{ position: 'relative', flex: 1, border: '2px dashed var(--border-color)', padding: '1rem', textAlign: 'center', borderRadius: '1rem', cursor: 'pointer', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', flex: 1, border: '2px dashed var(--border-color)', padding: '1rem', textAlign: 'center', borderRadius: '1rem', cursor: 'pointer', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <input 
                       type="file" 
                       accept="image/*" 
@@ -247,7 +248,7 @@ const Scanner = () => {
                       }}
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
                     />
-                    <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>🖼️</span>
+                    <span style={{ marginBottom: '0.5rem' }}><ImageIcon size={32} color="var(--text-secondary)" /></span>
                     <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>From Gallery</span>
                   </div>
                 </div>
@@ -277,9 +278,9 @@ const Scanner = () => {
                         setImageCameraActive(false);
                       }
                     }} 
-                    style={{ flex: 1, background: 'var(--accent-success)' }}
+                    style={{ flex: 1, background: 'var(--accent-success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
-                    📸 Snap Photo
+                    <Camera size={16} /> Snap Photo
                   </button>
                   <button onClick={() => setImageCameraActive(false)} className="btn" style={{ flex: 1, background: 'var(--accent-danger)' }}>
                     Cancel
@@ -317,11 +318,17 @@ const Scanner = () => {
                   gap: '1rem',
                 }}>
                   <div style={{
-                    fontSize: '2.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     lineHeight: 1,
                     filter: `drop-shadow(0 0 8px ${score.color})`,
                     animation: 'pulse-glow 2s ease-in-out infinite',
-                  }}>{score.emoji}</div>
+                  }}>
+                    {score.grade === 'GOOD' ? <CheckCircle size={40} color={score.color} /> : 
+                     score.grade === 'MODERATE' ? <AlertTriangle size={40} color={score.color} /> : 
+                     <XCircle size={40} color={score.color} />}
+                  </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 800, fontSize: '1.15rem', color: score.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       {score.label}
@@ -348,22 +355,22 @@ const Scanner = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '1.25rem' }}>
               <div className="glass" style={{ padding: '0.75rem', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Calories</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-accent)' }}>🔥 {result.calories}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Flame size={20} /> {result.calories}</div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>kcal</div>
               </div>
               <div className="glass" style={{ padding: '0.75rem', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Protein</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#22c55e' }}>🥩 {result.protein}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Beef size={20} /> {result.protein}</div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>grams</div>
               </div>
               <div className="glass" style={{ padding: '0.75rem', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Carbs</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f59e0b' }}>🍞 {result.carbs}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Wheat size={20} /> {result.carbs}</div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>grams</div>
               </div>
               <div className="glass" style={{ padding: '0.75rem', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Fats</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#a78bfa' }}>🥑 {result.fats}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#a78bfa', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Droplet size={20} /> {result.fats}</div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>grams</div>
               </div>
             </div>
@@ -380,9 +387,13 @@ const Scanner = () => {
                   padding: '0.875rem',
                   background: 'linear-gradient(135deg, #22c55e, #16a34a)',
                   fontSize: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}
               >
-                {saving ? '⏳ Saving...' : '✅ Save to Daily Log'}
+                {saving ? <><Loader2 size={16} /> Saving...</> : <><CheckCircle size={16} /> Save to Daily Log</>}
               </button>
             ) : (
               <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
@@ -393,20 +404,24 @@ const Scanner = () => {
                   padding: '0.75rem', 
                   borderRadius: '0.5rem',
                   marginBottom: '1rem',
-                  fontSize: '0.9rem'
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}>
-                  ✅ Meal saved to your daily log!
+                  <CheckCircle size={16} /> Meal saved to your daily log!
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <Link to="/dashboard" className="btn" style={{ flex: 1, textAlign: 'center', display: 'block' }}>
-                    📊 View Dashboard
+                  <Link to="/dashboard" className="btn" style={{ flex: 1, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <BarChart3 size={16} /> View Dashboard
                   </Link>
                   <button
                     onClick={() => { setResult(null); setSaved(false); setError(''); setBarcode(''); setImageFile(null); }}
                     className="btn"
-                    style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+                    style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
-                    🔄 Scan Another
+                    <RefreshCcw size={16} /> Scan Another
                   </button>
                 </div>
               </div>

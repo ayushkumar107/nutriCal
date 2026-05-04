@@ -29,17 +29,22 @@ const calculateDailyTarget = (user) => {
   return { calorieTarget, proteinTarget, carbsTarget, fatsTarget };
 };
 
-// @desc    Get weekly analytics data (last 7 days)
+// @desc    Get analytics data (day, week, month)
 // @route   GET /api/meals/analytics
 // @access  Private
 const getWeeklyAnalytics = async (req, res) => {
   try {
     const user = req.user;
     const targets = calculateDailyTarget(user);
+    const period = req.query.period || 'week';
 
-    // Get last 7 days of dates
+    let numDays = 7;
+    if (period === 'day') numDays = 1;
+    if (period === 'month') numDays = 30;
+
+    // Get dates
     const days = [];
-    for (let i = 6; i >= 0; i--) {
+    for (let i = numDays - 1; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       days.push(d.toISOString().split('T')[0]);
@@ -67,7 +72,7 @@ const getWeeklyAnalytics = async (req, res) => {
 
       return {
         date,
-        dayLabel: new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' }),
+        dayLabel: period === 'month' ? date.slice(8, 10) : new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' }),
         mealCount: meals.length,
         calories: Math.round(totals.calories),
         protein: Math.round(totals.protein),
@@ -150,9 +155,9 @@ const getWeeklyAnalytics = async (req, res) => {
       insights.push({
         type: 'info',
         icon: '📝',
-        text: `No meals logged this week yet. Start scanning your food to see analytics!`,
+        text: `No meals logged this ${period} yet. Start scanning your food to see analytics!`,
       });
-    } else if (daysWithData < 4) {
+    } else if (daysWithData < (period === 'month' ? 10 : period === 'week' ? 4 : 1)) {
       insights.push({
         type: 'info',
         icon: '📊',
