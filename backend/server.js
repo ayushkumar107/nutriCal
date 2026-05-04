@@ -14,7 +14,12 @@ const app = express();
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://your-frontend.vercel.app'],
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:3000', 
+    'https://your-frontend.vercel.app',
+    'https://nutrical-wnv3.onrender.com' // Allow self for testing
+  ],
   credentials: true
 }));
 
