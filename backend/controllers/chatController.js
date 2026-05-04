@@ -19,7 +19,6 @@ const chatWithCoach = async (req, res) => {
   }
 
   try {
-    // Fetch user context
     const user = req.user;
     const today = getTodayString();
     const mealLog = await MealLog.findOne({ user: user._id, date: today });
@@ -35,7 +34,7 @@ const chatWithCoach = async (req, res) => {
       { calories: 0, protein: 0, carbs: 0, fats: 0 }
     );
 
-    // Calculate targets (same as mealController)
+    // Calculate targets
     let bmr = 10 * (user.weight || 70) + 6.25 * (user.height || 170) - 5 * (user.age || 25) + 5;
     let tdee = Math.round(bmr * 1.55);
     let calorieTarget;
@@ -51,7 +50,7 @@ const chatWithCoach = async (req, res) => {
 
     const systemPrompt = `You are NutriCoach, a friendly, expert AI diet coach inside the nutriScan app. 
 You speak casually but knowledgeably — like a personal trainer texting their client.
-Use emojis sparingly for personality. Keep responses concise (2-4 short paragraphs max).
+Keep responses concise (2-4 short paragraphs max).
 
 USER PROFILE:
 - Name: ${user.name}
@@ -74,38 +73,25 @@ TODAY'S TOTALS:
 RULES:
 - Always factor in the user's goal (${user.goal}) when giving advice.
 - If they ask "what should I eat", suggest specific meals with estimated calories that fit their remaining budget.
-- If they describe a meal (e.g. "I ate 3 eggs and bread"), estimate the macros and tell them if it's good for their goal.
-- Be encouraging but honest. If something doesn't fit their goal, say so kindly.
-- Never diagnose medical conditions. Stick to general nutrition advice.
+- If they describe a meal, estimate the macros and tell them if it's good for their goal.
+- Be encouraging but honest.
+- Never diagnose medical conditions.
 - If the user asks something unrelated to nutrition/fitness, gently redirect them.`;
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-    // Build the full conversation as contents array
-    const contents = [];
-
-    // Add prior chat history
-    if (history && history.length > 0) {
-      for (const msg of history) {
-        contents.push({
-          role: msg.role === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.content }],
-        });
-      }
-    }
-
-    // Add current user message with system context baked in
-    const userMessageWithContext = contents.length === 0
-      ? `[System Context]\n${systemPrompt}\n\n[User Message]\n${message}`
-      : message;
-
-    contents.push({
-      role: 'user',
-      parts: [{ text: userMessageWithContext }],
+    const model = genAI.getGenerativeModel({ 
+      model: 'gemini-2.5-flash',
+      systemInstruction: systemPrompt
     });
 
-    const result = await model.generateContent({ contents });
+    const chatSession = model.startChat({
+      history: history ? history.map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }]
+      })) : []
+    });
+
+    const result = await chatSession.sendMessage(message);
     const responseText = result.response.text();
 
     res.json({
@@ -113,7 +99,7 @@ RULES:
     });
   } catch (error) {
     console.error('Chat error:', error);
-    res.status(500).json({ message: 'AI Coach is temporarily unavailable. ' + (error.message || '') });
+    res.status(500).json({ message: 'AI Coach is temporarily unavailable.' });
   }
 };
 

@@ -7,12 +7,12 @@
   z-index: 1;
 }
 
-/* Header - solid arcade bar */
 .header {
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   border-bottom: 4px solid var(--border-color);
   background: var(--bg-secondary);
   position: sticky;
@@ -217,6 +217,21 @@ input:focus, select:focus, textarea:focus {
   outline: none;
 }
 
+/* Profile Avatar & Dropdown */
+.profile-avatar-btn:hover {
+  filter: drop-shadow(0 0 10px var(--neon-cyan)) !important;
+  transform: scale(1.05);
+}
+
+.profile-dropdown {
+  animation: retro-drop 0.15s steps(3) forwards;
+}
+
+.profile-dropdown-item:hover {
+  background: var(--bg-card-hover) !important;
+  padding-left: 1.25rem !important;
+}
+
 /* Responsive Design */
 
 /* Tablet (max-width: 1024px) */
@@ -235,9 +250,22 @@ input:focus, select:focus, textarea:focus {
     padding: 1rem;
   }
   .header {
-    flex-direction: column;
+    flex-direction: row; /* keep row for logo and user menu */
     gap: 1rem;
     padding: 1rem;
+    align-items: center;
+  }
+  .main-nav {
+    order: 3;
+    width: 100%;
+    flex: 1 1 100% !important;
+    margin-top: 0.5rem;
+  }
+  .user-menu {
+    order: 2;
+  }
+  .logo {
+    order: 1;
   }
   .nav-links {
     flex-wrap: wrap;

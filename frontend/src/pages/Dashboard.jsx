@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { scoreFood } from '../utils/foodScore';
-import { Flame, Beef, Wheat, Droplet, Camera, Target, Utensils, Bot, Package, XCircle, CheckCircle, AlertTriangle, Info, X } from 'lucide-react';
+import { Flame, Beef, Wheat, Droplet, Camera, Target, Utensils, Bot, Package, XCircle, CheckCircle, AlertTriangle, Info, X, Hand } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, loading } = useContext(AuthContext);
@@ -83,8 +83,8 @@ const Dashboard = () => {
       {/* Header Section */}
       <div className="animate-fade-in" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ marginBottom: '0.25rem' }}>
-            Welcome back, <span style={{ color: 'var(--text-accent)' }}>{user.name}</span> 👋
+          <h2 style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            Welcome back, <span style={{ color: 'var(--text-accent)' }}>{user.name}</span> <Hand size={24} color="#f59e0b" style={{ transform: 'rotate(15deg)' }} />
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>{dateString}</p>
         </div>

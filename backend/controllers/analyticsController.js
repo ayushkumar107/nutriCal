@@ -114,13 +114,13 @@ const getWeeklyAnalytics = async (req, res) => {
     if (proteinDiff < -10) {
       insights.push({
         type: 'warning',
-        icon: '⚠️',
+        icon: 'warning',
         text: `You are ${Math.abs(proteinDiff)}% below your protein target this week. Add more lean meats, eggs, or protein shakes.`,
       });
     } else if (proteinDiff >= 0) {
       insights.push({
         type: 'success',
-        icon: '💪',
+        icon: 'muscle',
         text: `Great protein intake! You're hitting ${100 + proteinDiff}% of your daily protein target.`,
       });
     }
@@ -128,25 +128,25 @@ const getWeeklyAnalytics = async (req, res) => {
     if (user.goal === 'Bulking' && calDiff < -15) {
       insights.push({
         type: 'warning',
-        icon: '📢',
+        icon: 'megaphone',
         text: `You're ${Math.abs(calDiff)}% under your calorie target. You need more food to build muscle effectively.`,
       });
     } else if (user.goal === 'Cutting' && calDiff > 10) {
       insights.push({
         type: 'warning',
-        icon: '🚫',
+        icon: 'ban',
         text: `You're ${calDiff}% over your calorie limit. Tighten up your portions to stay in a deficit.`,
       });
     } else if (user.goal === 'Cutting' && calDiff <= 0) {
       insights.push({
         type: 'success',
-        icon: '🔥',
+        icon: 'flame',
         text: `Perfect calorie control! You're maintaining a solid deficit for your cut.`,
       });
     } else if (user.goal === 'Bulking' && calDiff >= -5) {
       insights.push({
         type: 'success',
-        icon: '🎯',
+        icon: 'target',
         text: `On track! You're consistently hitting your calorie surplus for bulking.`,
       });
     }
@@ -154,13 +154,13 @@ const getWeeklyAnalytics = async (req, res) => {
     if (weekTotals.meals === 0) {
       insights.push({
         type: 'info',
-        icon: '📝',
+        icon: 'clipboard',
         text: `No meals logged this ${period} yet. Start scanning your food to see analytics!`,
       });
     } else if (daysWithData < (period === 'month' ? 10 : period === 'week' ? 4 : 1)) {
       insights.push({
         type: 'info',
-        icon: '📊',
+        icon: 'bar-chart',
         text: `Only ${daysWithData} day${daysWithData > 1 ? 's' : ''} of data so far. Log consistently for better insights.`,
       });
     }

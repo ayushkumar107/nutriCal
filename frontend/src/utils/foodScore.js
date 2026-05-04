@@ -1,6 +1,6 @@
 /**
  * Real-Time Food Scoring System
- * Scores every food as: 🟢 Good | 🟡 Moderate | 🔴 Avoid
+ * Scores every food as: Good | Moderate | Avoid
  * Based on: Calories, Protein, and User Goal
  */
 
@@ -10,11 +10,10 @@ export const scoreFood = (calories, protein, goal) => {
   const proteinRatio = cal > 0 ? (prot * 4) / cal : 0; // protein cal / total cal
 
   if (goal === 'Bulking') {
-    // Bulking: high cal + high protein = 🟢, low cal = 🟡, low protein + low cal = 🔴
+    // Bulking: high cal + high protein = Good, low cal = Moderate, low protein + low cal = Avoid
     if (cal >= 400 && proteinRatio >= 0.15) {
       return {
         grade: 'GOOD',
-        emoji: '🟢',
         label: 'Good',
         color: '#22c55e',
         bg: 'rgba(34, 197, 94, 0.15)',
@@ -25,7 +24,6 @@ export const scoreFood = (calories, protein, goal) => {
     if (cal >= 250 || proteinRatio >= 0.2) {
       return {
         grade: 'MODERATE',
-        emoji: '🟡',
         label: 'Moderate',
         color: '#f59e0b',
         bg: 'rgba(245, 158, 11, 0.15)',
@@ -35,7 +33,6 @@ export const scoreFood = (calories, protein, goal) => {
     }
     return {
       grade: 'AVOID',
-      emoji: '🔴',
       label: 'Avoid',
       color: '#ef4444',
       bg: 'rgba(239, 68, 68, 0.12)',
@@ -45,11 +42,10 @@ export const scoreFood = (calories, protein, goal) => {
   }
 
   if (goal === 'Cutting') {
-    // Cutting: low cal + high protein = 🟢, moderate cal = 🟡, high cal + low protein = 🔴
+    // Cutting: low cal + high protein = Good, moderate cal = Moderate, high cal + low protein = Avoid
     if (cal <= 350 && proteinRatio >= 0.2) {
       return {
         grade: 'GOOD',
-        emoji: '🟢',
         label: 'Good',
         color: '#22c55e',
         bg: 'rgba(34, 197, 94, 0.15)',
@@ -60,7 +56,6 @@ export const scoreFood = (calories, protein, goal) => {
     if (cal <= 500) {
       return {
         grade: 'MODERATE',
-        emoji: '🟡',
         label: 'Moderate',
         color: '#f59e0b',
         bg: 'rgba(245, 158, 11, 0.15)',
@@ -70,7 +65,6 @@ export const scoreFood = (calories, protein, goal) => {
     }
     return {
       grade: 'AVOID',
-      emoji: '🔴',
       label: 'Avoid',
       color: '#ef4444',
       bg: 'rgba(239, 68, 68, 0.12)',
@@ -83,7 +77,6 @@ export const scoreFood = (calories, protein, goal) => {
   if (cal <= 500 && proteinRatio >= 0.15) {
     return {
       grade: 'GOOD',
-      emoji: '🟢',
       label: 'Good',
       color: '#22c55e',
       bg: 'rgba(34, 197, 94, 0.15)',
@@ -94,7 +87,6 @@ export const scoreFood = (calories, protein, goal) => {
   if (cal <= 700) {
     return {
       grade: 'MODERATE',
-      emoji: '🟡',
       label: 'Moderate',
       color: '#f59e0b',
       bg: 'rgba(245, 158, 11, 0.15)',
@@ -104,7 +96,6 @@ export const scoreFood = (calories, protein, goal) => {
   }
   return {
     grade: 'AVOID',
-    emoji: '🔴',
     label: 'Avoid',
     color: '#ef4444',
     bg: 'rgba(239, 68, 68, 0.12)',

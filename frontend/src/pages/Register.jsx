@@ -12,6 +12,7 @@ const Register = () => {
     height: '',
     weight: '',
     goal: 'Maintenance',
+    profileImage: '',
   });
   const [error, setError] = useState('');
   const { register } = useContext(AuthContext);
@@ -19,6 +20,22 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file size (limit to ~1MB since we store in MongoDB)
+      if (file.size > 1024 * 1024) {
+        setError('Image size must be less than 1MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, profileImage: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -83,10 +100,20 @@ const Register = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="goal" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Fitness Goal</label>
             <select id="goal" name="goal" value={formData.goal} onChange={handleChange} style={{ ...inputStyle, cursor: 'pointer' }}>
-              <option value="Maintenance">Maintenance ⚖️</option>
-              <option value="Cutting">Cutting 🔥</option>
-              <option value="Bulking">Bulking 💪</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Cutting">Cutting</option>
+              <option value="Bulking">Bulking</option>
             </select>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label htmlFor="profileImage" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Profile Image (Optional)</label>
+            <input type="file" id="profileImage" name="profileImage" accept="image/*" onChange={handleImageChange} style={inputStyle} />
+            {formData.profileImage && (
+              <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
+                <img src={formData.profileImage} alt="Profile Preview" style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--neon-cyan)' }} />
+              </div>
+            )}
           </div>
 
           <button type="submit" className="btn" style={{ marginTop: '0.5rem', width: '100%' }}>

@@ -2,6 +2,19 @@ import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+import { 
+  BarChart3, 
+  Flame, 
+  Beef, 
+  Wheat, 
+  Droplets, 
+  AlertTriangle, 
+  Dumbbell, 
+  Megaphone, 
+  Ban, 
+  Target, 
+  ClipboardCheck 
+} from 'lucide-react';
 
 const Analytics = () => {
   const { user, loading } = useContext(AuthContext);
@@ -51,11 +64,37 @@ const Analytics = () => {
   const timeRangeLabel = period === 'day' ? 'Today' : period === 'month' ? 'Last 30 days' : 'Last 7 days';
   const headerTitle = period === 'day' ? 'Daily Analytics' : period === 'month' ? 'Monthly Analytics' : 'Weekly Analytics';
 
+  const getInsightIcon = (iconName) => {
+    switch (iconName) {
+      case 'warning': return <AlertTriangle size={20} color="#f59e0b" />;
+      case 'muscle': return <Dumbbell size={20} color="#22c55e" />;
+      case 'megaphone': return <Megaphone size={20} color="#f59e0b" />;
+      case 'ban': return <Ban size={20} color="#ef4444" />;
+      case 'flame': return <Flame size={20} color="#ef4444" />;
+      case 'target': return <Target size={20} color="#22c55e" />;
+      case 'clipboard': return <ClipboardCheck size={20} color="var(--accent-primary)" />;
+      case 'bar-chart': return <BarChart3 size={20} color="var(--accent-primary)" />;
+      default: return <Target size={20} />;
+    }
+  };
+
+  const getMacroIcon = (iconName, size = 16, color = "currentColor") => {
+    switch (iconName) {
+      case 'calories': return <Flame size={size} color={color} />;
+      case 'protein': return <Beef size={size} color={color} />;
+      case 'carbs': return <Wheat size={size} color={color} />;
+      case 'fats': return <Droplets size={size} color={color} />;
+      default: return null;
+    }
+  };
+
   return (
     <div className="main-content">
       <div className="animate-fade-in" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ marginBottom: '0.25rem' }}>📊 {headerTitle}</h2>
+          <h2 style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <BarChart3 size={24} color="var(--neon-cyan)" /> {headerTitle}
+          </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
             {timeRangeLabel} • {daysWithData} day{daysWithData !== 1 ? 's' : ''} logged • {goal} mode
           </p>
@@ -116,8 +155,8 @@ const Analytics = () => {
             <text x="60" y="72" textAnchor="middle" fill="var(--text-secondary)" fontSize="10" fontWeight="500">{period.toUpperCase()} SCORE</text>
           </svg>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
-            <span>🔥 Cal: {calScore}%</span>
-            <span>🥩 Pro: {proteinScore}%</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Flame size={12} /> Cal: {calScore}%</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Beef size={12} /> Pro: {proteinScore}%</span>
           </div>
         </div>
 
@@ -136,7 +175,7 @@ const Analytics = () => {
                 animationDelay: `${i * 0.1}s`,
               }}
             >
-              <span style={{ fontSize: '1.5rem' }}>{insight.icon}</span>
+              <span style={{ flexShrink: 0 }}>{getInsightIcon(insight.icon)}</span>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>{insight.text}</p>
             </div>
           ))}
@@ -146,7 +185,7 @@ const Analytics = () => {
       {/* Calorie Trend Chart */}
       <div className="glass animate-fade-in" style={{ padding: '1.5rem', marginBottom: '1.25rem', animationDelay: '0.2s' }}>
         <h3 style={{ fontSize: '0.95rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🔥 Calorie Trend
+          <Flame size={18} color="var(--text-accent)" /> Calorie Trend
           <span style={{ fontSize: '0.7rem', fontWeight: 400, color: 'var(--text-secondary)' }}>
             Target: {targets.calorieTarget} kcal/day
           </span>
@@ -219,7 +258,7 @@ const Analytics = () => {
       {/* Protein Trend Chart */}
       <div className="glass animate-fade-in" style={{ padding: '1.5rem', marginBottom: '1.25rem', animationDelay: '0.3s' }}>
         <h3 style={{ fontSize: '0.95rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🥩 Protein vs Target
+          <Beef size={18} color="#22c55e" /> Protein vs Target
           <span style={{ fontSize: '0.7rem', fontWeight: 400, color: 'var(--text-secondary)' }}>
             Target: {targets.proteinTarget}g/day
           </span>
@@ -285,15 +324,17 @@ const Analytics = () => {
       {/* Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', animationDelay: '0.4s' }}>
         {[
-          { label: period === 'day' ? 'Total Calories' : 'Avg Calories', value: weekAvg.calories, target: targets.calorieTarget, unit: 'kcal', icon: '🔥', color: 'var(--text-accent)' },
-          { label: period === 'day' ? 'Total Protein' : 'Avg Protein', value: weekAvg.protein, target: targets.proteinTarget, unit: 'g', icon: '🥩', color: '#22c55e' },
-          { label: period === 'day' ? 'Total Carbs' : 'Avg Carbs', value: weekAvg.carbs, target: targets.carbsTarget, unit: 'g', icon: '🍞', color: '#f59e0b' },
-          { label: period === 'day' ? 'Total Fats' : 'Avg Fats', value: weekAvg.fats, target: targets.fatsTarget, unit: 'g', icon: '🥑', color: '#a78bfa' },
+          { label: period === 'day' ? 'Total Calories' : 'Avg Calories', value: weekAvg.calories, target: targets.calorieTarget, unit: 'kcal', type: 'calories', color: 'var(--text-accent)' },
+          { label: period === 'day' ? 'Total Protein' : 'Avg Protein', value: weekAvg.protein, target: targets.proteinTarget, unit: 'g', type: 'protein', color: '#22c55e' },
+          { label: period === 'day' ? 'Total Carbs' : 'Avg Carbs', value: weekAvg.carbs, target: targets.carbsTarget, unit: 'g', type: 'carbs', color: '#f59e0b' },
+          { label: period === 'day' ? 'Total Fats' : 'Avg Fats', value: weekAvg.fats, target: targets.fatsTarget, unit: 'g', type: 'fats', color: '#a78bfa' },
         ].map((card, i) => {
           const pct = Math.round((card.value / card.target) * 100);
           return (
             <div key={card.label} className="glass animate-fade-in macro-card" style={{ padding: '1rem', textAlign: 'center', animationDelay: `${0.4 + i * 0.08}s` }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{card.icon} {card.label}</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                {getMacroIcon(card.type, 12, card.color)} {card.label}
+              </div>
               <div style={{ fontSize: '1.4rem', fontWeight: 800, color: card.color, margin: '0.4rem 0 0.2rem' }}>{card.value}</div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>/ {card.target} {card.unit}</div>
               <div style={{

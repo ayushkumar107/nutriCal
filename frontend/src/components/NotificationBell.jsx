@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { Bell, BellOff, Utensils, Beef, Droplets, Sunrise, Megaphone, Ban, Dumbbell, Target, GlassWater, X } from 'lucide-react';
 
 const generateNotifications = (dailyData, user) => {
   const notifications = [];
@@ -17,7 +18,7 @@ const generateNotifications = (dailyData, user) => {
   if (mealCount === 0) {
     notifications.push({
       id: 'no-meals',
-      icon: '🍽️',
+      icon: <Utensils size={20} color="#f59e0b" />,
       title: "You haven't logged food today",
       body: 'Start scanning your meals to track your progress!',
       type: 'warning',
@@ -29,7 +30,7 @@ const generateNotifications = (dailyData, user) => {
   if (mealCount > 0 && protPercent < 30 && hour >= 14) {
     notifications.push({
       id: 'low-protein',
-      icon: '🥩',
+      icon: <Beef size={20} color="#ef4444" />,
       title: 'Protein intake is low today',
       body: `Only ${Math.round(totals.protein)}g of ${targets.proteinTarget}g (${protPercent}%). Add lean meats or a shake!`,
       type: 'warning',
@@ -41,7 +42,7 @@ const generateNotifications = (dailyData, user) => {
   if (hour >= 10 && hour <= 20 && hour % 3 === 0) {
     notifications.push({
       id: 'water',
-      icon: '💧',
+      icon: <Droplets size={20} color="#38bdf8" />,
       title: 'Time to hydrate!',
       body: 'Drink a glass of water. Staying hydrated helps with performance and recovery.',
       type: 'info',
@@ -53,7 +54,7 @@ const generateNotifications = (dailyData, user) => {
   if (hour >= 6 && hour < 11 && mealCount === 0) {
     notifications.push({
       id: 'morning',
-      icon: '🌅',
+      icon: <Sunrise size={20} color="#fbbf24" />,
       title: 'Good morning! Start your day right',
       body: user.goal === 'Bulking'
         ? 'A high-protein breakfast will kickstart your muscle-building day!'
@@ -69,7 +70,7 @@ const generateNotifications = (dailyData, user) => {
   if (hour >= 13 && hour <= 15 && mealCount > 0 && calPercent < 40) {
     notifications.push({
       id: 'afternoon',
-      icon: '📢',
+      icon: <Megaphone size={20} color="#f59e0b" />,
       title: user.goal === 'Bulking' ? 'You need more calories!' : 'Lunchtime check-in',
       body: user.goal === 'Bulking'
         ? `Only ${calPercent}% of your calorie target done. Time for a big lunch!`
@@ -84,7 +85,7 @@ const generateNotifications = (dailyData, user) => {
     if (user.goal === 'Cutting' && calPercent > 90) {
       notifications.push({
         id: 'evening-cut',
-        icon: '🚫',
+        icon: <Ban size={20} color="#ef4444" />,
         title: 'Almost at your calorie limit',
         body: `You've used ${calPercent}% of your daily calories. Keep dinner light!`,
         type: 'warning',
@@ -94,7 +95,7 @@ const generateNotifications = (dailyData, user) => {
     if (user.goal === 'Bulking' && calPercent < 60) {
       notifications.push({
         id: 'evening-bulk',
-        icon: '💪',
+        icon: <Dumbbell size={20} color="#22c55e" />,
         title: "Don't forget your calories!",
         body: `Only ${calPercent}% of your target. Consider a calorie-dense dinner or a shake before bed.`,
         type: 'warning',
@@ -107,7 +108,7 @@ const generateNotifications = (dailyData, user) => {
   if (mealCount > 0 && calPercent >= 80 && calPercent <= 105 && protPercent >= 70) {
     notifications.push({
       id: 'on-track',
-      icon: '🎯',
+      icon: <Target size={20} color="#22c55e" />,
       title: "You're crushing it today!",
       body: `${calPercent}% calories, ${protPercent}% protein. Keep it up!`,
       type: 'success',
@@ -119,7 +120,7 @@ const generateNotifications = (dailyData, user) => {
   if (hour >= 8 && hour <= 22 && hour % 3 !== 0) {
     notifications.push({
       id: 'water-soft',
-      icon: '🚰',
+      icon: <GlassWater size={20} color="#38bdf8" />,
       title: 'Stay hydrated',
       body: 'Aim for 2-3 liters of water today for optimal performance.',
       type: 'info',
@@ -187,17 +188,18 @@ const NotificationBell = ({ user }) => {
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          fontSize: '1.2rem',
           position: 'relative',
           padding: '0.35rem',
           color: 'var(--text-primary)',
           transition: 'transform 0.2s',
+          display: 'flex',
+          alignItems: 'center',
         }}
         onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.15)'}
         onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         title="Notifications"
       >
-        🔔
+        <Bell size={22} color="var(--neon-cyan)" />
         {count > 0 && (
           <span style={{
             position: 'absolute',
@@ -205,16 +207,15 @@ const NotificationBell = ({ user }) => {
             right: '-2px',
             width: '18px',
             height: '18px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #ef4444, #f97316)',
+            background: 'var(--accent-danger)',
             color: 'white',
             fontSize: '0.6rem',
             fontWeight: 800,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 8px rgba(239,68,68,0.5)',
-            animation: 'pulse-glow 2s ease-in-out infinite',
+            border: '2px solid #000',
+            boxShadow: '2px 2px 0px #000',
           }}>
             {count}
           </span>
@@ -234,22 +235,22 @@ const NotificationBell = ({ user }) => {
             maxHeight: '420px',
             overflowY: 'auto',
             background: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '1rem',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
-            backdropFilter: 'blur(20px)',
+            border: '2px solid var(--border-color)',
+            boxShadow: '6px 6px 0px rgba(0,0,0,0.8)',
             zIndex: 1000,
           }}
         >
           {/* Panel Header */}
           <div style={{
             padding: '1rem 1.25rem 0.75rem',
-            borderBottom: '1px solid var(--border-color)',
+            borderBottom: '2px solid var(--border-color)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-            <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Notifications</span>
+            <span style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Bell size={16} color="var(--neon-cyan)" /> Notifications
+            </span>
             {activeNotifs.length > 0 && (
               <button
                 onClick={() => setDismissed(notifications.map((n) => n.id))}
@@ -260,6 +261,7 @@ const NotificationBell = ({ user }) => {
                   fontSize: '0.75rem',
                   cursor: 'pointer',
                   fontWeight: 600,
+                  fontFamily: 'var(--font-heading)',
                 }}
               >
                 Clear all
@@ -271,7 +273,7 @@ const NotificationBell = ({ user }) => {
           <div style={{ padding: '0.5rem' }}>
             {activeNotifs.length === 0 ? (
               <div style={{ padding: '2rem 1rem', textAlign: 'center' }}>
-                <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem', opacity: 0.4 }}>🔕</span>
+                <BellOff size={32} color="var(--text-secondary)" style={{ marginBottom: '0.5rem', opacity: 0.4 }} />
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>All caught up!</p>
               </div>
             ) : (
@@ -281,7 +283,6 @@ const NotificationBell = ({ user }) => {
                   className="animate-fade-in"
                   style={{
                     padding: '0.85rem 1rem',
-                    borderRadius: '0.75rem',
                     marginBottom: '0.35rem',
                     display: 'flex',
                     gap: '0.75rem',
@@ -295,7 +296,7 @@ const NotificationBell = ({ user }) => {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
                 >
-                  <span style={{ fontSize: '1.3rem', flexShrink: 0, marginTop: '0.1rem' }}>{notif.icon}</span>
+                  <span style={{ flexShrink: 0, marginTop: '0.1rem', display: 'flex' }}>{notif.icon}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.2rem' }}>{notif.title}</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{notif.body}</div>
@@ -308,17 +309,17 @@ const NotificationBell = ({ user }) => {
                       border: 'none',
                       color: 'var(--text-secondary)',
                       cursor: 'pointer',
-                      fontSize: '0.85rem',
                       padding: '0.15rem',
                       opacity: 0.5,
                       transition: 'opacity 0.2s',
                       flexShrink: 0,
+                      display: 'flex',
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
                     onMouseLeave={(e) => e.currentTarget.style.opacity = 0.5}
                     title="Dismiss"
                   >
-                    ✕
+                    <X size={14} />
                   </button>
                 </div>
               ))

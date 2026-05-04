@@ -33,6 +33,10 @@ const userSchema = mongoose.Schema(
       enum: ['Bulking', 'Cutting', 'Maintenance'],
       default: 'Maintenance',
     },
+    profileImage: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

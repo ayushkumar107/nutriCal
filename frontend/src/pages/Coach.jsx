@@ -34,7 +34,7 @@ const Coach = () => {
     if (user && messages.length === 0) {
       setMessages([{
         role: 'assistant',
-        content: `Hey ${user.name}! 👋 I'm your AI Diet Coach. I know your goal is **${user.goal}** and I can see everything you've eaten today.\n\nAsk me anything — what to eat next, whether a meal fits your goals, or get a full meal plan. Let's crush it! 💪`,
+        content: `Hey ${user.name}! I'm your AI Diet Coach. I know your goal is **${user.goal}** and I can see everything you've eaten today.\n\nAsk me anything — what to eat next, whether a meal fits your goals, or get a full meal plan. Let's crush it!`,
       }]);
     }
   }, [user]);
@@ -71,7 +71,7 @@ const Coach = () => {
         ...prev,
         {
           role: 'assistant',
-          content: '😔 Sorry, I had a hiccup. Try asking again!',
+          content: 'Sorry, I had a hiccup. Try asking again!',
         },
       ]);
     } finally {
