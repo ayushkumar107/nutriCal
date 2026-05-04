@@ -8,8 +8,14 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
-  // Configure axios defaults. Use the environment variable for production, otherwise use relative path for local proxy.
-  axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api';
+  // Configure axios defaults. 
+  // Use VITE_API_URL if defined (e.g. production), otherwise fall back to '/api' (local proxy).
+  const apiBaseURL = import.meta.env.VITE_API_URL || '/api';
+  axios.defaults.baseURL = apiBaseURL;
+  
+  if (import.meta.env.DEV) {
+    console.log('API Base URL:', apiBaseURL);
+  }
 
   useEffect(() => {
     if (token) {
@@ -40,7 +46,9 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Login failed' };
+      console.error('Login Error:', error);
+      const message = error.response?.data?.message || error.message || 'Login failed';
+      return { success: false, message: `Login failed: ${message} (Status: ${error.response?.status || 'Network Error'})` };
     }
   };
 
@@ -52,7 +60,9 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Registration failed' };
+      console.error('Registration Error:', error);
+      const message = error.response?.data?.message || error.message || 'Registration failed';
+      return { success: false, message: `Registration failed: ${message} (Status: ${error.response?.status || 'Network Error'})` };
     }
   };
 

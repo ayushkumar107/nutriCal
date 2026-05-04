@@ -68,38 +68,38 @@ const Register = () => {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
               <label htmlFor="name" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Full Name</label>
-              <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required style={inputStyle} placeholder="John Doe" />
+              <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="glass" style={inputStyle} placeholder="John Doe" />
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
               <label htmlFor="email" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Email</label>
-              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required style={inputStyle} placeholder="you@example.com" />
+              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="glass" style={inputStyle} placeholder="you@example.com" />
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="password" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Password</label>
-            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required style={inputStyle} placeholder="••••••••" />
+            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required className="glass" style={inputStyle} placeholder="••••••••" />
           </div>
 
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
               <label htmlFor="age" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Age</label>
-              <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} style={inputStyle} placeholder="e.g. 25" />
+              <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} className="glass" style={inputStyle} placeholder="e.g. 25" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
               <label htmlFor="height" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Height (cm)</label>
-              <input type="number" id="height" name="height" value={formData.height} onChange={handleChange} style={inputStyle} placeholder="e.g. 175" />
+              <input type="number" id="height" name="height" value={formData.height} onChange={handleChange} className="glass" style={inputStyle} placeholder="e.g. 175" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
               <label htmlFor="weight" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Weight (kg)</label>
-              <input type="number" id="weight" name="weight" value={formData.weight} onChange={handleChange} style={inputStyle} placeholder="e.g. 70" />
+              <input type="number" id="weight" name="weight" value={formData.weight} onChange={handleChange} className="glass" style={inputStyle} placeholder="e.g. 70" />
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="goal" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Fitness Goal</label>
-            <select id="goal" name="goal" value={formData.goal} onChange={handleChange} style={{ ...inputStyle, cursor: 'pointer' }}>
+            <select id="goal" name="goal" value={formData.goal} onChange={handleChange} className="glass" style={{ ...inputStyle, cursor: 'pointer' }}>
               <option value="Maintenance">Maintenance</option>
               <option value="Cutting">Cutting</option>
               <option value="Bulking">Bulking</option>
@@ -108,7 +108,7 @@ const Register = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="profileImage" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Profile Image (Optional)</label>
-            <input type="file" id="profileImage" name="profileImage" accept="image/*" onChange={handleImageChange} style={inputStyle} />
+            <input type="file" id="profileImage" name="profileImage" accept="image/*" onChange={handleImageChange} className="glass" style={inputStyle} />
             {formData.profileImage && (
               <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
                 <img src={formData.profileImage} alt="Profile Preview" style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--neon-cyan)' }} />
@@ -138,7 +138,6 @@ const inputStyle = {
   border: '1px solid var(--border-color)',
   width: '100%',
   transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
-  className: 'glass'
 };
 
 export default Register;
