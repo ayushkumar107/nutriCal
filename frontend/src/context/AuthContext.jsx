@@ -8,8 +8,8 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
-  // Configure axios defaults to use relative paths (which will be proxied by Vite to bypass firewall)
-  axios.defaults.baseURL = '/api';
+  // Configure axios defaults. Use the environment variable for production, otherwise use relative path for local proxy.
+  axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api';
 
   useEffect(() => {
     if (token) {
