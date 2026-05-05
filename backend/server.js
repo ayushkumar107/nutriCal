@@ -21,10 +21,17 @@ app.use(cors({
       'http://localhost:3000',
       'https://nutrical-wnv3.onrender.com'
     ];
-    // Allow origins that match .vercel.app or are in the allowedOrigins list
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+    
+    // Check if origin matches allowed list or is a Vercel deployment
+    const isAllowed = !origin || 
+                     allowedOrigins.includes(origin) || 
+                     origin.endsWith('.vercel.app') ||
+                     /https:\/\/nutriscan-.*\.vercel\.app/.test(origin); // Common Vercel preview pattern
+
+    if (isAllowed) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked request from origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },

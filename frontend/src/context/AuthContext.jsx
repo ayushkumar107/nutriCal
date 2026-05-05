@@ -11,6 +11,13 @@ export const AuthProvider = ({ children }) => {
   // Configure axios defaults. 
   // Use VITE_API_URL if defined (e.g. production), otherwise fall back to '/api/' (local proxy).
   let apiBaseURL = import.meta.env.VITE_API_URL || '/api';
+  
+  // Robustness check: Ensure VITE_API_URL includes /api if it's pointing to a remote server
+  // and doesn't already have it.
+  if (import.meta.env.VITE_API_URL && !apiBaseURL.includes('/api')) {
+    apiBaseURL = apiBaseURL.endsWith('/') ? `${apiBaseURL}api` : `${apiBaseURL}/api`;
+  }
+
   if (!apiBaseURL.endsWith('/')) {
     apiBaseURL += '/';
   }
@@ -49,9 +56,15 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       return { success: true };
     } catch (error) {
-      console.error('Login Error:', error);
+      console.error('Login Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL
+      });
       const message = error.response?.data?.message || error.message || 'Login failed';
-      return { success: false, message: `Login failed: ${message} (Status: ${error.response?.status || 'Network Error'})` };
+      return { success: false, message: `Login failed: ${message} (Status: ${error.response?.status || 'Network/CORS Error'})` };
     }
   };
 
@@ -63,9 +76,15 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       return { success: true };
     } catch (error) {
-      console.error('Registration Error:', error);
+      console.error('Registration Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL
+      });
       const message = error.response?.data?.message || error.message || 'Registration failed';
-      return { success: false, message: `Registration failed: ${message} (Status: ${error.response?.status || 'Network Error'})` };
+      return { success: false, message: `Registration failed: ${message} (Status: ${error.response?.status || 'Network/CORS Error'})` };
     }
   };
 
