@@ -99,7 +99,10 @@ RULES:
     });
   } catch (error) {
     console.error('Chat error:', error);
-    res.status(500).json({ message: 'AI Coach is temporarily unavailable.' });
+    res.status(500).json({ 
+      message: 'AI Coach is temporarily unavailable.', 
+      error: error.message 
+    });
   }
 };
 

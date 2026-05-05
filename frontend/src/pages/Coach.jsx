@@ -67,11 +67,18 @@ const Coach = () => {
         { role: 'assistant', content: res.data.reply },
       ]);
     } catch (err) {
+      console.error('Chat Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        url: err.config?.url,
+        baseURL: err.config?.baseURL
+      });
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
-          content: 'Sorry, I had a hiccup. Try asking again!',
+          content: `Sorry, I had a hiccup: ${err.response?.data?.error || err.message}. Try asking again!`,
         },
       ]);
     } finally {

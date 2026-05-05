@@ -109,6 +109,12 @@ const Scanner = () => {
       const res = await axios.get(`food/barcode/${code}`);
       setResult(res.data);
     } catch (err) {
+      console.error('Barcode Fetch Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        url: err.config?.url
+      });
       setError(err.response?.data?.message || 'Failed to fetch food details');
     } finally {
       setIsLoading(false);
@@ -145,10 +151,24 @@ const Scanner = () => {
         });
       }
 
+      console.log('Sending image for analysis...', {
+        dataLength: base64Data.length,
+        mimeType: base64Data.split(';')[0]
+      });
+
       const res = await axios.post('food/analyze-image', { imageBase64: base64Data });
       setResult(res.data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to analyze image with AI');
+      console.error('Image Analysis Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        url: err.config?.url
+      });
+      
+      const errorMsg = err.response?.data?.error || err.message;
+      const mainMsg = err.response?.data?.message || 'Failed to analyze image';
+      setError(`${mainMsg}: ${errorMsg}`);
     } finally {
       setIsLoading(false);
     }

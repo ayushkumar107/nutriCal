@@ -43,7 +43,23 @@ const analyzeImage = async (req, res) => {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const systemPrompt = `You are a nutrition expert AI inside the nutriScan app. 
+Analyze the food in the provided image.
+Estimate the portion size and calculate the total macronutrients for the entire visible meal.
+Return ONLY a valid, raw JSON object (without markdown code blocks) with the following exact keys and types:
+{
+  "productName": "A descriptive name of the meal",
+  "calories": 120,
+  "protein": 10,
+  "carbs": 20,
+  "fats": 5
+}
+Do not include any other text or formatting.`;
+
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemPrompt
+    });
 
     // Ensure we send raw base64 data to Gemini
     let base64Data = imageBase64;
@@ -64,24 +80,19 @@ const analyzeImage = async (req, res) => {
       }
     ];
 
-    const prompt = `You are a nutrition expert AI. Analyze the food in the provided image.
-    Estimate the portion size and calculate the total macronutrients for the entire visible meal.
-    Return ONLY a valid, raw JSON object (without markdown code blocks) with the following exact keys and types:
-    {
-      "productName": "A descriptive name of the meal",
-      "calories": 120,
-      "protein": 10,
-      "carbs": 20,
-      "fats": 5
-    }
-    Do not include any other text or formatting.`;
-
-    const result = await model.generateContent([prompt, ...imageParts]);
+    const result = await model.generateContent(imageParts);
     const responseText = result.response.text();
     
-    // Clean up potential markdown formatting
-    const cleanJsonString = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-    const nutritionData = JSON.parse(cleanJsonString);
+    // Robust JSON extraction using regex
+    let nutritionData;
+    try {
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      const cleanJsonString = jsonMatch ? jsonMatch[0] : responseText;
+      nutritionData = JSON.parse(cleanJsonString);
+    } catch (parseError) {
+      console.error('JSON Parse Error. Raw response:', responseText);
+      throw new Error('AI returned invalid format. Please try again.');
+    }
 
     res.json({
       productName: nutritionData.productName || 'Unknown Meal',
@@ -95,7 +106,10 @@ const analyzeImage = async (req, res) => {
 
   } catch (error) {
     console.error('Error in analyzeImage:', error);
-    res.status(500).json({ message: 'Failed to analyze image using AI. ' + (error.message || '') });
+    res.status(500).json({ 
+      message: 'Failed to analyze image using AI.',
+      error: error.message 
+    });
   }
 };
 
