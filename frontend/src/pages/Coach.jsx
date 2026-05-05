@@ -57,7 +57,7 @@ const Coach = () => {
           content: m.content,
         }));
 
-      const res = await axios.post('/chat', {
+      const res = await axios.post('chat', {
         message: userMessage,
         history: history.slice(0, -1), // don't include current message in history
       });

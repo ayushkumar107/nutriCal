@@ -28,7 +28,7 @@ const Scanner = () => {
     if (!result) return;
     setSaving(true);
     try {
-      await axios.post('/meals/log', {
+      await axios.post('meals/log', {
         productName: result.productName,
         calories: result.calories,
         protein: result.protein,
@@ -106,7 +106,7 @@ const Scanner = () => {
     setResult(null);
 
     try {
-      const res = await axios.get(`/food/barcode/${code}`);
+      const res = await axios.get(`food/barcode/${code}`);
       setResult(res.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch food details');
@@ -145,7 +145,7 @@ const Scanner = () => {
         });
       }
 
-      const res = await axios.post('/food/analyze-image', { imageBase64: base64Data });
+      const res = await axios.post('food/analyze-image', { imageBase64: base64Data });
       setResult(res.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to analyze image with AI');

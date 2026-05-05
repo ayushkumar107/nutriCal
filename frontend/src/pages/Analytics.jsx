@@ -25,7 +25,7 @@ const Analytics = () => {
   useEffect(() => {
     if (user) {
       setFetching(true);
-      axios.get(`/analytics/analytics?period=${period}`)
+      axios.get(`analytics/analytics?period=${period}`)
         .then((res) => setData(res.data))
         .catch(console.error)
         .finally(() => setFetching(false));

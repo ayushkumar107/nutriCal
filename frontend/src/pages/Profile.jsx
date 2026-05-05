@@ -82,7 +82,7 @@ const Profile = () => {
         payload.password = form.password;
       }
 
-      await axios.put('/auth/profile', payload);
+      await axios.put('auth/profile', payload);
       await refreshUser();
       setEditing(false);
       setSuccess('Profile updated successfully!');

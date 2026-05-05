@@ -9,8 +9,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Configure axios defaults. 
-  // Use VITE_API_URL if defined (e.g. production), otherwise fall back to '/api' (local proxy).
-  const apiBaseURL = import.meta.env.VITE_API_URL || '/api';
+  // Use VITE_API_URL if defined (e.g. production), otherwise fall back to '/api/' (local proxy).
+  let apiBaseURL = import.meta.env.VITE_API_URL || '/api';
+  if (!apiBaseURL.endsWith('/')) {
+    apiBaseURL += '/';
+  }
   axios.defaults.baseURL = apiBaseURL;
   
   if (import.meta.env.DEV) {
@@ -28,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get('/auth/profile');
+      const res = await axios.get('auth/profile');
       setUser(res.data);
     } catch (error) {
       console.error('Error fetching profile', error);
@@ -40,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post('/auth/login', { email, password });
+      const res = await axios.post('auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
       setUser(res.data);
@@ -54,7 +57,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const res = await axios.post('/auth/register', userData);
+      const res = await axios.post('auth/register', userData);
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
       setUser(res.data);
@@ -75,7 +78,7 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      const res = await axios.get('/auth/profile');
+      const res = await axios.get('auth/profile');
       setUser(res.data);
     } catch (error) {
       console.error('Error refreshing profile', error);

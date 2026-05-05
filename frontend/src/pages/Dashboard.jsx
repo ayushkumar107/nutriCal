@@ -12,7 +12,7 @@ const Dashboard = () => {
 
   const fetchDailyData = useCallback(async () => {
     try {
-      const res = await axios.get('/meals/today');
+      const res = await axios.get('meals/today');
       setDailyData(res.data);
     } catch (err) {
       console.error('Failed to fetch daily data:', err);
@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   const handleDeleteMeal = async (mealId) => {
     try {
-      await axios.delete(`/meals/${mealId}`);
+      await axios.delete(`meals/${mealId}`);
       fetchDailyData(); // Refresh
     } catch (err) {
       console.error('Failed to delete meal:', err);
